@@ -10,9 +10,6 @@ terraform {
     }
   }
   backend "azurerm" {
-    resource_group_name  = "fiap-tech-challenge-main-group"
-    storage_account_name = "sandubaterraform"
-    container_name       = "sanduba-terraform-storage-container"
     key = "terraform-payment.tfstate"
   }
 }
@@ -91,11 +88,11 @@ resource "azurerm_cosmosdb_mongo_collection" "sanduba_payment_database_collectio
   }
 }
 
-# resource "github_actions_organization_secret" "payment_database_connectionstring" {
-#   secret_name     = "APP_PAYMENT_DATABASE_CONNECTION_STRING"
-#   visibility      = "all"
-#   plaintext_value = azurerm_cosmosdb_account.sanduba_payment_database_account.primary_mongodb_connection_string 
-# }
+resource "github_actions_organization_secret" "payment_database_connectionstring" {
+  secret_name     = "APP_PAYMENT_DATABASE_CONNECTION_STRING"
+  visibility      = "all"
+  plaintext_value = azurerm_cosmosdb_account.sanduba_payment_database_account.primary_mongodb_connection_string
+}
 
 resource "azurerm_service_plan" "payment_plan" {
   name                = "payment-app-service-plan"
@@ -138,7 +135,7 @@ resource "azurerm_linux_function_app" "linux_function" {
   app_settings = {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = false
     FUNCTIONS_EXTENSION_VERSION         = "~4"
-    ConnectionString                    = azurerm_cosmosdb_account.sanduba_payment_database_account.primary_mongodb_connection_string 
+    ConnectionString                    = azurerm_cosmosdb_account.sanduba_payment_database_account.primary_mongodb_connection_string
   }
 
   site_config {
