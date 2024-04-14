@@ -4,10 +4,6 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "3.90.0"
     }
-    github = {
-      source  = "integrations/github"
-      version = "~> 6.0"
-    }
   }
   backend "azurerm" {
     key = "terraform-payment.tfstate"
@@ -86,12 +82,6 @@ resource "azurerm_cosmosdb_mongo_collection" "sanduba_payment_database_collectio
     keys   = ["_id"]
     unique = true
   }
-}
-
-resource "github_actions_organization_secret" "payment_database_connectionstring" {
-  secret_name     = "APP_PAYMENT_DATABASE_CONNECTION_STRING"
-  visibility      = "all"
-  plaintext_value = azurerm_cosmosdb_account.sanduba_payment_database_account.primary_mongodb_connection_string
 }
 
 resource "azurerm_service_plan" "payment_plan" {
