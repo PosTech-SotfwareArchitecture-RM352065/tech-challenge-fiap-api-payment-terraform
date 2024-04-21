@@ -32,9 +32,6 @@ resource "azurerm_resource_group" "resource_group" {
   }
 }
 
-provider "github" {
-}
-
 resource "azurerm_cosmosdb_account" "sanduba_payment_database_account" {
   name                          = "sanduba-payment-database-account"
   location                      = azurerm_resource_group.resource_group.location
