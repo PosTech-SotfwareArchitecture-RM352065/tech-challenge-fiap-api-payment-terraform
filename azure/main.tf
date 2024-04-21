@@ -33,7 +33,7 @@ resource "azurerm_resource_group" "resource_group" {
 }
 
 resource "azurerm_cosmosdb_account" "sanduba_payment_database_account" {
-  name                          = "sanduba-payment-database-account"
+  name                          = "sanduba-payment-cosmosdb-account"
   location                      = azurerm_resource_group.resource_group.location
   resource_group_name           = azurerm_resource_group.resource_group.name
   offer_type                    = "Standard"
