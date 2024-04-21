@@ -33,7 +33,7 @@ resource "azurerm_resource_group" "resource_group" {
 }
 
 resource "azurerm_cosmosdb_account" "sanduba_payment_database_account" {
-  name                          = "sanduba-payment-cosmosdb-account"
+  name                          = "sanduba-payment-cosmosdb"
   location                      = azurerm_resource_group.resource_group.location
   resource_group_name           = azurerm_resource_group.resource_group.name
   offer_type                    = "Standard"
@@ -122,7 +122,9 @@ resource "azurerm_linux_function_app" "linux_function" {
   app_settings = {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = false
     FUNCTIONS_EXTENSION_VERSION         = "~4"
-    ConnectionString                    = azurerm_cosmosdb_account.sanduba_payment_database_account.primary_mongodb_connection_string
+    "MongoSettings:ConnectionString"    = azurerm_cosmosdb_account.sanduba_payment_database_account.primary_mongodb_connection_string
+    "MongoSettings:DatabaseName"        = "sanduba-payment-database"
+    "MongoSettings:CollectionName"      = "sanduba-payment-database-collection"
   }
 
   site_config {
@@ -130,7 +132,7 @@ resource "azurerm_linux_function_app" "linux_function" {
     application_stack {
       docker {
         registry_url = "https://index.docker.io"
-        image_name   = "cangelosilima/sanduba-payment.api"
+        image_name   = "cangelosilima/sanduba-payment-api"
         image_tag    = "latest"
       }
     }
