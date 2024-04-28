@@ -73,7 +73,11 @@ resource "azurerm_cosmosdb_mongo_collection" "sanduba_payment_database_collectio
 
   default_ttl_seconds = "777"
   throughput          = 400
-
+  
+  index {
+    keys   = ["_id"]
+    unique = true
+  }
 }
 
 resource "azurerm_service_plan" "payment_plan" {
@@ -117,9 +121,9 @@ resource "azurerm_linux_function_app" "linux_function" {
   app_settings = {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = false
     FUNCTIONS_EXTENSION_VERSION         = "~4"
-    "MongoSettings__ConnectionString"    = azurerm_cosmosdb_account.sanduba_payment_database_account.primary_mongodb_connection_string
-    "MongoSettings__DatabaseName"        = "sanduba-payment-database"
-    "MongoSettings__CollectionName"      = "sanduba-payment-database-collection"
+    "MongoSettings__ConnectionString"   = azurerm_cosmosdb_account.sanduba_payment_database_account.primary_mongodb_connection_string
+    "MongoSettings__DatabaseName"       = "sanduba-payment-database"
+    "MongoSettings__CollectionName"     = "sanduba-payment-database-collection"
   }
 
   site_config {
