@@ -7,8 +7,9 @@ on:
 
 env:
   TF_LOG: INFO
-  GITHUB_OWNER: ${{ github.repository_owner }}
-  GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
+  TF_VAR_mercadopago_authentication_token: ${{ secrets.APP_PAYMENT_MERCADOPAGO_AUTHENTICATION_TOKEN }}
+  TF_VAR_mercadopago_user_id: ${{ secrets.APP_PAYMENT_MERCADOPAGO_USER_ID }}
+  TF_VAR_mercadopago_cashier_id: ${{ secrets.APP_PAYMENT_MERCADOPAGO_CASHIER_ID }}
 
 jobs:
   azure_terraform:

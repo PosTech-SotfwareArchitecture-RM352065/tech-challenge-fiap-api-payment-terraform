@@ -73,7 +73,7 @@ resource "azurerm_cosmosdb_mongo_collection" "sanduba_payment_database_collectio
 
   default_ttl_seconds = "777"
   throughput          = 400
-  
+
   index {
     keys   = ["_id"]
     unique = true
@@ -119,11 +119,16 @@ resource "azurerm_linux_function_app" "linux_function" {
   functions_extension_version = "~4"
 
   app_settings = {
-    WEBSITES_ENABLE_APP_SERVICE_STORAGE = false
-    FUNCTIONS_EXTENSION_VERSION         = "~4"
-    "MongoSettings__ConnectionString"   = azurerm_cosmosdb_account.sanduba_payment_database_account.primary_mongodb_connection_string
-    "MongoSettings__DatabaseName"       = "sanduba-payment-database"
-    "MongoSettings__CollectionName"     = "sanduba-payment-database-collection"
+    WEBSITES_ENABLE_APP_SERVICE_STORAGE        = false
+    FUNCTIONS_EXTENSION_VERSION                = "~4"
+    "MongoSettings__ConnectionString"          = azurerm_cosmosdb_account.sanduba_payment_database_account.primary_mongodb_connection_string
+    "MongoSettings__DatabaseName"              = "sanduba-payment-database"
+    "MongoSettings__CollectionName"            = "sanduba-payment-database-collection"
+    "MercadoPagoSettings__BaseUrl"             = "https://api.mercadopago.com"
+    "MercadoPagoSettings__NotificationUrl"     = "https://webhook.site/0f1b4c04-c466-4772-9856-f4174a14ec30"
+    "MercadoPagoSettings__AuthenticationToken" = var.mercadopago_authentication_token
+    "MercadoPagoSettings__UserId"              = var.mercadopago_user_id
+    "MercadoPagoSettings__CashierId"           = var.mercadopago_cashier_id
   }
 
   site_config {
