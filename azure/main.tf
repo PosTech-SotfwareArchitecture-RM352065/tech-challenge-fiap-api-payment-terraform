@@ -125,7 +125,7 @@ resource "azurerm_linux_function_app" "linux_function" {
     "MongoSettings__DatabaseName"              = "sanduba-payment-database"
     "MongoSettings__CollectionName"            = "sanduba-payment-database-collection"
     "MercadoPagoSettings__BaseUrl"             = "https://api.mercadopago.com"
-    "MercadoPagoSettings__NotificationUrl"     = "https://sanduba-payment-function.azurewebsites.net/api/PaymentCreation"
+    "MercadoPagoSettings__NotificationUrl"     = "https://sanduba-payment-function.azurewebsites.net/api/PaymentProviderUpdate"
     "MercadoPagoSettings__AuthenticationToken" = var.mercadopago_authentication_token
     "MercadoPagoSettings__UserId"              = var.mercadopago_user_id
     "MercadoPagoSettings__CashierId"           = var.mercadopago_cashier_id
