@@ -80,6 +80,24 @@ resource "azurerm_cosmosdb_mongo_collection" "sanduba_payment_database_collectio
   }
 }
 
+resource "azurerm_servicebus_namespace" "servicebus_namespace" {
+  name                = "fiap-tech-challenge-payment-topic-namespace"
+  location            = azurerm_resource_group.resource_group.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+  sku                 = "Standard"
+
+  tags = {
+    environment = azurerm_resource_group.resource_group.tags["environment"]
+  }
+}
+
+resource "azurerm_servicebus_topic" "servicebus_topic" {
+  name         = "fiap-tech-challenge-payment-topic"
+  namespace_id = azurerm_servicebus_namespace.servicebus_namespace.id
+
+  enable_partitioning = false
+}
+
 resource "azurerm_service_plan" "payment_plan" {
   name                = "payment-app-service-plan"
   resource_group_name = azurerm_resource_group.resource_group.name
@@ -129,6 +147,7 @@ resource "azurerm_linux_function_app" "linux_function" {
     "MercadoPagoSettings__AuthenticationToken" = var.mercadopago_authentication_token
     "MercadoPagoSettings__UserId"              = var.mercadopago_user_id
     "MercadoPagoSettings__CashierId"           = var.mercadopago_cashier_id
+    "BrokerSettings__TopicConnectionString"    = azurerm_servicebus_namespace.servicebus_namespace.default_primary_connection_string
   }
 
   site_config {
