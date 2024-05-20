@@ -148,6 +148,7 @@ resource "azurerm_linux_function_app" "linux_function" {
     "MercadoPagoSettings__UserId"              = var.mercadopago_user_id
     "MercadoPagoSettings__CashierId"           = var.mercadopago_cashier_id
     "BrokerSettings__TopicConnectionString"    = azurerm_servicebus_namespace.servicebus_namespace.default_primary_connection_string
+    "BrokerSettings__TopicName"                = azurerm_servicebus_topic.servicebus_topic.name
   }
 
   site_config {
