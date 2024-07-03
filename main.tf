@@ -10,7 +10,7 @@ terraform {
     }
   }
   backend "azurerm" {
-    key                  = "terraform-payment.tfstate"
+    key = "terraform-payment.tfstate"
   }
 }
 
@@ -39,6 +39,7 @@ module "azure" {
 
 module "github" {
   source              = "./github"
+  depends_on          = [module.azure]
   sanduba_payment_url = module.azure.sanduba_payment_url
   environment         = data.azurerm_resource_group.main_group.tags["environment"]
 }
