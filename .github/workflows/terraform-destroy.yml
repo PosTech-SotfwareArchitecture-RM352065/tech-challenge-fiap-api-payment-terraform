@@ -6,6 +6,8 @@ on:
   workflow_dispatch:
   
 env:
+  GITHUB_OWNER: ${{ github.repository_owner }}
+  GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
   TF_LOG: INFO
   TF_VAR_location: ""
   TF_VAR_mercadopago_authentication_token: ""

@@ -3,6 +3,8 @@ name: 'Terraform Plan'
 on: [pull_request, workflow_dispatch]
 
 env:
+  GITHUB_OWNER: ${{ github.repository_owner }}
+  GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
   TF_LOG: INFO
   TF_VAR_location: ${{ var.AZURE_LOCATION }}
   TF_VAR_mercadopago_authentication_token: ${{ secrets.APP_PAYMENT_MERCADOPAGO_AUTHENTICATION_TOKEN }}
