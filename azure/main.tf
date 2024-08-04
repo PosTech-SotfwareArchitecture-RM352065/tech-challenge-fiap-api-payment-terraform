@@ -1,34 +1,10 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "3.90.0"
-    }
-  }
-  backend "azurerm" {
-    key = "terraform-payment.tfstate"
-  }
-}
-
-provider "azurerm" {
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
-  }
-}
-
-data "azurerm_resource_group" "main_group" {
-  name = "fiap-tech-challenge-main-group"
-}
 
 resource "azurerm_resource_group" "resource_group" {
   name       = "fiap-tech-challenge-payment-group"
-  location   = data.azurerm_resource_group.main_group.location
-  managed_by = data.azurerm_resource_group.main_group.name
+  location   = var.location
 
   tags = {
-    environment = data.azurerm_resource_group.main_group.tags["environment"]
+    environment = var.environment
   }
 }
 
@@ -52,6 +28,7 @@ resource "azurerm_cosmosdb_account" "sanduba_payment_database_account" {
   geo_location {
     location          = azurerm_resource_group.resource_group.location
     failover_priority = 0
+    zone_redundant    = false
   }
 
   tags = {
@@ -112,12 +89,12 @@ resource "azurerm_service_plan" "payment_plan" {
 
 data "azurerm_storage_account" "storage_account_terraform" {
   name                = "sandubaterraform"
-  resource_group_name = data.azurerm_resource_group.main_group.name
+  resource_group_name = var.main_resource_group
 }
 
 data "azurerm_virtual_network" "virtual_network" {
   name                = "fiap-tech-challenge-network"
-  resource_group_name = data.azurerm_resource_group.main_group.name
+  resource_group_name = var.main_resource_group
 }
 
 data "azurerm_subnet" "api_subnet" {
@@ -171,12 +148,12 @@ resource "azurerm_linux_function_app" "linux_function" {
 
 data "azurerm_storage_account" "log_storage_account" {
   name                = "sandubalog"
-  resource_group_name = "fiap-tech-challenge-observability-group"
+  resource_group_name = var.main_resource_group
 }
 
 data "azurerm_log_analytics_workspace" "log_workspace" {
   name                = "fiap-tech-challenge-observability-workspace"
-  resource_group_name = "fiap-tech-challenge-observability-group"
+  resource_group_name = var.main_resource_group
 }
 
 resource "azurerm_monitor_diagnostic_setting" "function_monitor" {
@@ -192,4 +169,9 @@ resource "azurerm_monitor_diagnostic_setting" "function_monitor" {
   metric {
     category = "AllMetrics"
   }
+}
+
+output "sanduba_payment_url" {
+  sensitive = false
+  value     = "https://${azurerm_linux_function_app.linux_function.default_hostname}/api"
 }

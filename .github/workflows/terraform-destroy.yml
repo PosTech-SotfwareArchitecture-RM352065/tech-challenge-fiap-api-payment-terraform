@@ -6,7 +6,10 @@ on:
   workflow_dispatch:
   
 env:
+  GITHUB_OWNER: ${{ github.repository_owner }}
+  GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
   TF_LOG: INFO
+  TF_VAR_location: ""
   TF_VAR_mercadopago_authentication_token: ""
   TF_VAR_mercadopago_user_id: ""
   TF_VAR_mercadopago_cashier_id: ""
@@ -22,12 +25,22 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./azure
 
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v4
+
+    - name: Set environment variable
+      id: set-env
+      run: |
+        if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+          echo "TF_VAR_environment=production" >> $GITHUB_ENV
+        elif [[ "${GITHUB_REF}" == "refs/heads/develop" ]]; then
+          echo "TF_VAR_environment=staging" >> $GITHUB_ENV
+        else
+          echo "TF_VAR_environment=default" >> $GITHUB_ENV
+        fi
 
     # Install the preferred version of Terraform CLI 
     - name: Setup Terraform

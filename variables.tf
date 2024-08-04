@@ -1,20 +1,10 @@
 variable "environment" {
   type      = string
   sensitive = false
-}
-
-variable "location" {
-  type      = string
-  sensitive = false
-}
-
-variable "main_resource_group" {
-  type      = string
-  sensitive = false
   default   = ""
 }
 
-variable "main_resource_group_location" {
+variable "location" {
   type      = string
   sensitive = false
   default   = ""
@@ -22,12 +12,16 @@ variable "main_resource_group_location" {
 
 variable "mercadopago_authentication_token" {
   sensitive = true
+  default   = ""
 }
 
 variable "mercadopago_user_id" {
   sensitive = true
+  default   = ""
 }
 
 variable "mercadopago_cashier_id" {
   sensitive = true
+  default   = ""
 }
+
