@@ -57,22 +57,19 @@ resource "azurerm_cosmosdb_mongo_collection" "sanduba_payment_database_collectio
   }
 }
 
-resource "azurerm_servicebus_namespace" "servicebus_namespace" {
-  name                = "fiap-tech-challenge-payment-topic-namespace"
-  location            = azurerm_resource_group.resource_group.location
-  resource_group_name = azurerm_resource_group.resource_group.name
-  sku                 = "Standard"
-
-  tags = {
-    environment = azurerm_resource_group.resource_group.tags["environment"]
-  }
+data "azurerm_servicebus_namespace" "order_topic_namespace" {
+  name                = "fiap-tech-challenge-order-topic-namespace"
+  resource_group_name = "fiap-tech-challenge-order-group"
 }
 
-resource "azurerm_servicebus_topic" "servicebus_topic" {
-  name         = "fiap-tech-challenge-payment-topic"
-  namespace_id = azurerm_servicebus_namespace.servicebus_namespace.id
+data "azurerm_servicebus_topic" "order_topic" {
+  name         = "fiap-tech-challenge-order-topic"
+  namespace_id = data.azurerm_servicebus_namespace.order_topic_namespace.id
+}
 
-  enable_partitioning = false
+data "azurerm_servicebus_topic_authorization_rule" "order_topic_manager" {
+  name     = "${data.azurerm_servicebus_topic.order_topic.name}-manager"
+  topic_id = data.azurerm_servicebus_topic.order_topic.id
 }
 
 resource "azurerm_service_plan" "payment_plan" {
@@ -124,8 +121,8 @@ resource "azurerm_linux_function_app" "linux_function" {
     "MercadoPagoSettings__AuthenticationToken" = var.mercadopago_authentication_token
     "MercadoPagoSettings__UserId"              = var.mercadopago_user_id
     "MercadoPagoSettings__CashierId"           = var.mercadopago_cashier_id
-    "BrokerSettings__TopicConnectionString"    = azurerm_servicebus_namespace.servicebus_namespace.default_primary_connection_string
-    "BrokerSettings__TopicName"                = azurerm_servicebus_topic.servicebus_topic.name
+    "BrokerSettings__TopicConnectionString"    = data.azurerm_servicebus_topic_authorization_rule.order_topic_manager.primary_connection_string
+    "BrokerSettings__TopicName"                = data.azurerm_servicebus_topic.order_topic.name
   }
 
   site_config {
